@@ -31,4 +31,5 @@ func main() {
 		log.Fatal("ListenAndServe", err)
 		return
 	}
+	fmt.Print("xxxooo")
 }
