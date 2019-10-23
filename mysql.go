@@ -4,10 +4,19 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"log"
+	"net/http"
 )
 
+var Id int64 = 1
+
 func main() {
-	getRows(1)
+	http.HandleFunc("/", sayHello2)
+	err := http.ListenAndServe(":9091", nil)
+	if err != nil {
+		log.Fatal("ListenAndServe", err)
+		return
+	}
 }
 
 type MysqlInfo struct {
@@ -34,7 +43,7 @@ func dbConnect() *sql.DB {
 	return db
 }
 
-func getRows(limit int) {
+func getRows(limit int64) int64 {
 	stmt, err := dbConnect().Prepare("select * from am_user limit 10")
 	fmt.Println(stmt)
 	//PanicErr(err)
@@ -42,6 +51,7 @@ func getRows(limit int) {
 	rows, err := dbConnect().Query("select id from am_demand limit ?", limit)
 	PanicErr(err, &xgoto)
 	xgoto = false
+	var Reid int
 	for rows.Next() {
 		var id int
 		//var roleId int
@@ -49,9 +59,21 @@ func getRows(limit int) {
 		//var username string
 		err = rows.Scan(&id/*, &roleId, &username, &alias*/)
 		PanicErr(err, &xgoto)
-		fmt.Println("id =", id)
+		Reid = id
+		//fmt.Println("id =", id)
 		//fmt.Println("roleId =", roleId)
 		//fmt.Println("username =", username)
 		//fmt.Println("alias =", alias)
 	}
+	return int64(Reid)
+}
+
+func sayHello2(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Fprint(w,"id =", getRows(Id))
+	Id += 1
 }
