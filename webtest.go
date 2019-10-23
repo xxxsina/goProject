@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	GTPL_PATH = "./src/lee/tpl"
+	GTPL_PATH = "./tpl"
 )
 
 type Myform struct {
@@ -56,11 +56,11 @@ func login(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		path := GTPL_PATH + "/login.gtpl"
 		if exits := isExists(path); !exits {
-			fmt.Fprintf(w,"login.gtpl not isExists \r\n")
+			fmt.Fprintf(w, "login.gtpl not isExists \r\n")
 			fmt.Fprintf(w, path)
 			return
 		}
-		t, _:=template.ParseFiles(path)
+		t, _ := template.ParseFiles(path)
 		//log.Println(t.Execute(w, nil))
 		//token
 		crutime := time.Now().Unix()
@@ -70,15 +70,15 @@ func login(w http.ResponseWriter, r *http.Request) {
 		t.Execute(w, token)
 	} else {
 		//方法一
-			//这句很重要，要不然数据出不来
-			//r.ParseForm()  //解析url传递的参数，对于POST则解析响应包的主体(request body)
-			////fmt.Fprint(w, r.ParseForm())
-			//fmt.Println("username:", r.Form["username"][0])
-			//fmt.Println("password:", r.Form["password"])
+		//这句很重要，要不然数据出不来
+		//r.ParseForm()  //解析url传递的参数，对于POST则解析响应包的主体(request body)
+		////fmt.Fprint(w, r.ParseForm())
+		//fmt.Println("username:", r.Form["username"][0])
+		//fmt.Println("password:", r.Form["password"])
 		//方法二
 		data := Myform{
-			username:r.FormValue("username"),
-			password:r.FormValue("password")}
+			username: r.FormValue("username"),
+			password: r.FormValue("password")}
 		fmt.Println("username:", data.username)
 		fmt.Println("password:", data.password)
 	}
